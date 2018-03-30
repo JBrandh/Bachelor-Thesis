@@ -1,0 +1,46 @@
+function [ s ] = senseitivityinit( var,density )
+%SENSEITIVITYINIT Summary of this function goes here
+%   Detailed explanation goes here
+Param=setParam;
+conc=setParam;
+x=cell2mat(conc(:,1));                                                      %matdata of concentrations           
+Rates=setRates;
+k=cell2mat(Rates(:,1));
+global d;
+d=cell2mat(Rates(:,1));
+
+global tspan;
+[t,y]=ode15s(@setODE,[0 tspan],x);
+
+readout_0=max(y(:,24));                                                      %readout
+%readout_0=Integrate(t,3600*6,y(:,24));
+                                                              
+scale=linspace(1-var,1+var,density);
+
+s=zeros(density,length(Param));
+for i=1:length(conc)
+    for j=1:density
+        e(i)=x(i)*scale(j);
+        
+        [t,y]=ode15s(@sensODE,[0,tspan],e);
+        readout=max(y(:,24));
+        %readout=Integrate(t,3600*6,y(:,24));
+        s(j,i)=((readout-readout_0)/readout_0)/((e(i)-x(i))/x(i));
+    end
+    d=k;
+end
+
+figure;
+subplot(2,1,1);
+x=[1 length(Param)];
+y=[1-var 1+var];
+imagesc(x,y,s);
+title('sensitivity');
+colorbar;
+
+subplot(2,1,2);
+plot(linspace(1,37,37),s(1,:),'*',linspace(1,37,37),s(density,:),'*');
+title('maximal sensitivity');
+
+end
+
