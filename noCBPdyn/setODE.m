@@ -1,10 +1,11 @@
-function [ dx ] = setODE(t,x)
-%SETODE Summary of this function goes here
-%   Detailed explanation goes here
+function [dx] = setODE(t, x)
+%SETODE Differential equations for JAK signalling.
+%   Differential equations of JAK model
 
+% global parameter vector
 global k;
 
-
+% local parameters
 k1=k(1);        %R-JAK-Binding
 k1r=k(2);
 k2=k(3);        %IFN-Binding
@@ -50,7 +51,7 @@ k28=k(42);      %generic degradation rate
 k29=k(43);      %CBP Binding
 k29r=k(44);     %
 
-
+% state variables
 R=x(1);
 JAK=x(2);
 RJ=x(3);
@@ -94,10 +95,10 @@ CBP=x(40);
 CBP_STAT1nP_STAT1nP=x(41);
 CBP_STAT1nP_STAT1nP_PPN=x(42);
 
-
-global tstart                                                                    %delay of stimulus
+% transient stimulus
+global tstart
 global tstim
-te=tstart+tstim;                                                               %transient signal
+te=tstart+tstim;
 if t<tstart
     IFN=0;    
 else
@@ -107,14 +108,11 @@ if t>te
     IFN=0;
 end
         
-
-
-
-
+% rates
 v(1)=k1*R*JAK-k1r*RJ;                                                       %
 v(2)=k2*IFN*RJ-k2r*IFNRJ;                                                   %
 v(3)=k3*IFNRJ*IFNRJ-k3r*IFNRJ2;                                             %
-v(4)=k4*IFNRJ2;                                                             %Rezeptor-Activation
+v(4)=k4*IFNRJ2;                                                             %Receptor-Activation
 v(5)=k5*STAT1c*IFNRJ2P-k5r*IFNRJ2P_STAT1c;                                  %
 v(6)=k6*IFNRJ2P_STAT1c;                                                     %
 v(7)=k7*IFNRJ2P*STAT1cP-k7r*IFNRJ2P_STAT1cP;                                %
@@ -167,6 +165,7 @@ v(53)=k29*STAT1nP_STAT1nP*CBP-k29r*CBP_STAT1nP_STAT1nP;                     %
 v(54)=k15*PPN*CBP_STAT1nP_STAT1nP-k15r*CBP_STAT1nP_STAT1nP_PPN;             %
 v(55)=k16*CBP_STAT1nP_STAT1nP_PPN;                                          %
 
+% differential equations
 dx(1,1)=-v(1)-v(45);                                                        %d[R]/dt        
 dx(2,1)=-v(1)-v(46);                                                        %d[JAK]/dt      
 dx(3,1)=v(1)-v(2);                                                          %d[RJ]/dt       

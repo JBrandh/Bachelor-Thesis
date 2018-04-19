@@ -13,7 +13,7 @@ global tspan;
 n=100;
 scale=linspace(0,r,n);
 f=zeros(n,1);
-if mode=="rate"
+if mode=='rate'
     for i=1:n
         k(change)=k(change)*scale(i);
         sol=ode15s(@setODE,[0 tspan],y0);
@@ -22,12 +22,12 @@ if mode=="rate"
     end
     figure;
     plot(scale(:),f(:));
-    xlabel("k("+int2str(change)+")*x");
+    xlabel('k('+int2str(change)+')*x');
     str=conc(specie,2);
-    ylabel(str+" max");      
+    ylabel(str+' max');
 end
 
-if mode=="specie"
+if mode=='specie'
     for i=1:n
         x(change)=x(change)*scale(i);
         sol=ode15s(@setODE,[0 tspan],x);
@@ -37,9 +37,9 @@ if mode=="specie"
     figure;
     plot(scale(:),f(:));
     spec=conc(change,2);
-    xlabel(spec+"*x");
+    xlabel(spec+'*x');
     str=conc(specie,2);
-    ylabel(str+" max"); 
+    ylabel(str+' max'); 
 end
 
 end

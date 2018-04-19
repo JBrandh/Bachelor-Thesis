@@ -6,7 +6,4 @@ for j=1:nargin
     concentrations(j,1)=varargin{j} ;
 end
 
-    
-
 end
-

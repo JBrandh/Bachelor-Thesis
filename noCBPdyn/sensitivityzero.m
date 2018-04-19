@@ -1,17 +1,12 @@
-function [s] = sensitivityzero( var,density,mode )
+function [s] = sensitivityzero(var, density, mode)
 %SENSITIVITYZERO Summary of this function goes here
 %   Detailed explanation goes here
+
 Rates=setRates;
 global y0;
 global tspan;
 global k
 target=37;
-
-
-
-
-
-
 
 
 [tdefault,ydefault]=ode15s(@setODE,[0 tspan],y0);
@@ -22,7 +17,7 @@ readout=zeros(1,length(Rates));
 scale=linspace(1-var,1+var,density);
 
 for i=1:length(Rates)
-    if mode=="zeros"
+    if strcmp(mode, 'zeros')
         k(i)=0;
         [t,y]=ode15s(@setODE,[0,tspan],y0);
     
@@ -36,23 +31,22 @@ for i=1:length(Rates)
         k=cell2mat(Rates(:,1));
     else
         for j=1:density
-        k(i)=k(i)*scale(j);
-        [t,y]=ode15s(@setODE,[0,tspan],y0);
-    
-        if max(abs(y(:,target)))<0.1
-            s(j,i)=0;
-        else
-            s(j,i)=y(length(t),target)/ydefault(length(tdefault),target);
-            Integral=Integrate(t,y(:,target),tspan);
-            readout(j,i)=Integral(end);
+            k(i)=k(i)*scale(j);
+            [t,y]=ode15s(@setODE,[0,tspan],y0);
+
+            if max(abs(y(:,target)))<0.1
+                s(j,i)=0;
+            else
+                s(j,i)=y(length(t),target)/ydefault(length(tdefault),target);
+                Integral=Integrate(t,y(:,target),tspan);
+                readout(j,i)=Integral(end);
+            end
+            k=cell2mat(Rates(:,1));
         end
-        k=cell2mat(Rates(:,1));
     end
-    end
-    
-    
 end
-if mode=="zeros"
+
+if strcmp(mode, 'zeros')
     for i=1:length(s) %2gruen 1weiss 0gelb  -1rot hier stimmt was nicht im farbcode
         if s(i)==0                                                              %no-response
             a(i)=0;
@@ -79,8 +73,8 @@ else
     xaxis=[1 length(Rates)];
     yaxis=[1-var 1+var];
     axis xy;
-    ylabel("fold derivation from default value");
-    xlabel("rate constants index");
+    ylabel('fold derivation from default value');
+    xlabel('rate constants index');
     for j=1:density
             for i=1:length(s) %2gruen 1weiss 0gelb  -1rot hier stimmt was nicht im farbcode
                 if s(j,i)==0                                                              %no-response
@@ -105,6 +99,8 @@ else
 
     end
 end
+
+% create figure
 figure;
 clims=[0 4];
 imagesc(a,clims);
